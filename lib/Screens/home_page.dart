@@ -58,13 +58,21 @@ class _HomePageState extends State<HomePage> {
                             Expanded(
                               child: GestureDetector(
                                 child: Container(
+                                  padding: EdgeInsets.only(
+                                    left: 20.0,
+                                    top: 20.0,
+                                  ),
                                   child: Text(
                                     'Interstitial Lung Disease',
                                     style: kRecordingTitle,
                                   ),
-                                  color: Colors.amber,
                                   height: 400.0,
                                   width: 50.0,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(
+                                        20), // Adjust the radius here
+                                  ),
                                 ),
                               ),
                             ),

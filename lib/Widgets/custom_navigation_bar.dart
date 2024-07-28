@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -10,6 +11,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:io' as io;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   @override
@@ -17,61 +20,20 @@ class CustomNavigationBar extends StatefulWidget {
 }
 
 class _CustomNavigationBarState extends State<CustomNavigationBar> {
+  bool isRecording = false;
   int _selectedIndex = 0;
-  bool permissionResult = false;
-  late bool isRecording = false;
-  late Directory? appDocDirectory;
-  AudioRecorder audioRecorder = AudioRecorder();
+  AudioRecorderService audioRecorderService = AudioRecorderService();
+  AudioPlayer audioPlayer = AudioPlayer();
+  io.Directory? audioFilePath;
+
   @override
   void initState() {
     super.initState();
-    _requestMicrophonePermission();
+    _initialize();
   }
 
-  Future<bool> checkMicPermission() async {
-    permissionResult = await AudioRecorder().hasPermission();
-    // permissions have been given + added into the .xml and .plist files
-    print('permission result is $permissionResult');
-    if (io.Platform.isIOS) {
-      appDocDirectory = await getApplicationDocumentsDirectory();
-      print(appDocDirectory.toString());
-    } else {
-      appDocDirectory = await getExternalStorageDirectory();
-    }
-    return permissionResult;
-  }
-
-  void startRecord() async {
-    await checkMicPermission();
-    if (permissionResult == true) {
-      print('Recording status: $permissionResult');
-      print('recording pressed.');
-      await audioRecorder.start(
-        const RecordConfig(),
-        path: '${appDocDirectory!.path}/newrecording.m4a',
-      );
-      isRecording = await audioRecorder.isRecording();
-    } else {
-      print('Permission Fail (result print below');
-      print('perm result: $permissionResult');
-    }
-  }
-
-  Future<void> _requestMicrophonePermission() async {
-    PermissionStatus status = await Permission.microphone.status;
-
-    if (!status.isGranted) {
-      status = await Permission.microphone.request();
-    }
-
-    if (status.isGranted) {
-      // Permission granted, proceed with your microphone-related functionality
-    } else if (status.isDenied) {
-      // Permission denied, show a message to the user
-    } else if (status.isPermanentlyDenied) {
-      // Permission permanently denied, take the user to settings
-      openAppSettings();
-    }
+  Future<void> _initialize() async {
+    audioFilePath = await getApplicationDocumentsDirectory();
   }
 
   void _onItemTapped(int index) {
@@ -80,11 +42,39 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
     });
   }
 
-  void stopRecord() async {
-    await audioRecorder.stop();
-    isRecording = await audioRecorder.isRecording();
-    print('recording stopped');
-    print(isRecording);
+  Future<void> _playAudio() async {
+    try {
+      if (audioFilePath != null) {
+        String filePath = '${audioFilePath!.path}/newrecording12345.m4a';
+        bool exists = await File(filePath).exists();
+        if (exists) {
+          print('Starting audio playback from $filePath');
+          await audioPlayer.setSource(DeviceFileSource(filePath));
+          await audioPlayer.resume();
+          print('Audio playback finished');
+        } else {
+          print('Error: Audio file does not exist at $filePath');
+        }
+      } else {
+        print('Error: audioFilePath is null');
+      }
+    } catch (e) {
+      print('Error playing audio: $e');
+    }
+  }
+
+  Future<void> _pauseAudio() async {
+    await audioPlayer.pause();
+  }
+
+  Future<void> _stopAudio() async {
+    await audioPlayer.stop();
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
@@ -101,50 +91,85 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(
-            icon: Icon(IonIcons.home),
-            onPressed: () => _onItemTapped(0),
-            color: _selectedIndex == 0 ? Colors.blue : Colors.grey,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: Icon(IonIcons.home),
+                onPressed: () => _onItemTapped(0),
+                color: _selectedIndex == 0 ? Colors.blue : Colors.grey,
+              ),
+              IconButton(
+                icon: Icon(IonIcons.search),
+                onPressed: () => _onItemTapped(1),
+                color: _selectedIndex == 1 ? Colors.blue : Colors.grey,
+              ),
+              IconButton(
+                icon: Container(
+                  height: 50.0,
+                  width: 50.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                ),
+                onPressed: () async {
+                  if (!isRecording) {
+                    print('Starting your recording now!');
+                    setState(() {
+                      isRecording = true;
+                    });
+                    await audioRecorderService.startRecord();
+                  } else {
+                    print('Stopping your recording now!');
+                    await audioRecorderService.stopRecord();
+                    setState(() {
+                      isRecording = false;
+                      audioFilePath = audioRecorderService.getPath();
+                    });
+                    print('Path: ${audioFilePath!.path}');
+                  }
+                  _onItemTapped(2);
+                },
+                color: _selectedIndex == 2 ? Colors.blue : Colors.red,
+              ),
+              IconButton(
+                icon: Icon(IonIcons.trophy),
+                onPressed: () => _onItemTapped(3),
+                color: _selectedIndex == 3 ? Colors.blue : Colors.grey,
+              ),
+              IconButton(
+                icon: Icon(IonIcons.settings),
+                onPressed: () => _onItemTapped(4),
+                color: _selectedIndex == 4 ? Colors.blue : Colors.grey,
+              ),
+            ],
           ),
-          IconButton(
-            icon: Icon(IonIcons.search),
-            onPressed: () => _onItemTapped(1),
-            color: _selectedIndex == 1 ? Colors.blue : Colors.grey,
-          ),
-          IconButton(
-            icon: Container(
-              height: 50.0,
-              width: 50.0,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: Icon(Icons.play_arrow),
+                onPressed: () {
+                  _playAudio();
+                  print('Playing audio?');
+                },
+                color: Colors.green,
+              ),
+              IconButton(
+                icon: Icon(Icons.pause),
+                onPressed: _pauseAudio,
+                color: Colors.yellow,
+              ),
+              IconButton(
+                icon: Icon(Icons.stop),
+                onPressed: _stopAudio,
                 color: Colors.red,
               ),
-            ),
-            onPressed: () {
-              if (!isRecording) {
-                print('STARTING');
-                startRecord();
-              } else {
-                print('STOPPING');
-                stopRecord();
-              }
-
-              () => _onItemTapped(2);
-            },
-            color: _selectedIndex == 2 ? Colors.blue : Colors.red,
-          ),
-          IconButton(
-            icon: Icon(IonIcons.trophy),
-            onPressed: () => _onItemTapped(3),
-            color: _selectedIndex == 3 ? Colors.blue : Colors.grey,
-          ),
-          IconButton(
-            icon: Icon(IonIcons.settings),
-            onPressed: () => _onItemTapped(4),
-            color: _selectedIndex == 4 ? Colors.blue : Colors.grey,
+            ],
           ),
         ],
       ),
