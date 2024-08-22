@@ -1,29 +1,52 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:io' as io;
+import 'package:path_provider/path_provider.dart';
 
 class AudioPlayerService {
   AudioPlayer audioPlayer = AudioPlayer();
-  late io.Directory audioFilePath;
-  AudioPlAudioPlayerService() {}
-  Future<void> _playAudio() async {
-    print('step 1: $audioFilePath');
-    if (audioFilePath != null) {
-      print('starting audio');
-      await audioPlayer.setSource(
-          DeviceFileSource('${audioFilePath.path}/newrecording1.m4a'));
+  io.Directory? audioFilePath;
 
-      await audioPlayer.resume();
-      print('audio finished');
-    } else {
-      print('error');
+  // Correct constructor
+  AudioPlayerService() {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    audioFilePath = await getExternalStorageDirectory();
+    print('aps path $audioFilePath');
+  }
+
+  Future<void> playAudio() async {
+    try {
+      // Wait for initialization if it's not completed yet
+      if (audioFilePath == null) {
+        await _initialize();
+      }
+
+      if (audioFilePath != null) {
+        String filePath = '${audioFilePath!.path}/newrecording123456.m4a';
+        bool exists = await io.File(filePath).exists();
+        if (exists) {
+          print('Starting audio playback from $filePath');
+          await audioPlayer.setSource(DeviceFileSource(filePath));
+          await audioPlayer.resume();
+          print('Audio playback finished');
+        } else {
+          print('Error: Audio file does not exist at $filePath');
+        }
+      } else {
+        print('Error: audioFilePath is null');
+      }
+    } catch (e) {
+      print('Error playing audio: $e');
     }
   }
 
-  Future<void> _pauseAudio() async {
+  Future<void> pauseAudio() async {
     await audioPlayer.pause();
   }
 
-  Future<void> _stopAudio() async {
+  Future<void> stopAudio() async {
     await audioPlayer.stop();
   }
 }

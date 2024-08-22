@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
           ),
           CustomNavigationBar(), // Custom navigation bar at the bottom
         ],
-      ),
+      ), 
     );
   }
 }

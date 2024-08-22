@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:dojo/Screens/new_recording.dart';
+import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,52 +25,19 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   bool isRecording = false;
   int _selectedIndex = 0;
   AudioRecorderService audioRecorderService = AudioRecorderService();
+  AudioPlayerService audioPlayerService = AudioPlayerService();
   AudioPlayer audioPlayer = AudioPlayer();
   io.Directory? audioFilePath;
 
   @override
   void initState() {
     super.initState();
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    audioFilePath = await getApplicationDocumentsDirectory();
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  Future<void> _playAudio() async {
-    try {
-      if (audioFilePath != null) {
-        String filePath = '${audioFilePath!.path}/newrecording12345.m4a';
-        bool exists = await File(filePath).exists();
-        if (exists) {
-          print('Starting audio playback from $filePath');
-          await audioPlayer.setSource(DeviceFileSource(filePath));
-          await audioPlayer.resume();
-          print('Audio playback finished');
-        } else {
-          print('Error: Audio file does not exist at $filePath');
-        }
-      } else {
-        print('Error: audioFilePath is null');
-      }
-    } catch (e) {
-      print('Error playing audio: $e');
-    }
-  }
-
-  Future<void> _pauseAudio() async {
-    await audioPlayer.pause();
-  }
-
-  Future<void> _stopAudio() async {
-    await audioPlayer.stop();
   }
 
   @override
@@ -124,13 +93,16 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                     });
                     await audioRecorderService.startRecord();
                   } else {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) => NewRecording(),
+                    );
                     print('Stopping your recording now!');
                     await audioRecorderService.stopRecord();
                     setState(() {
                       isRecording = false;
-                      audioFilePath = audioRecorderService.getPath();
                     });
-                    print('Path: ${audioFilePath!.path}');
                   }
                   _onItemTapped(2);
                 },
@@ -153,20 +125,24 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
             children: [
               IconButton(
                 icon: Icon(Icons.play_arrow),
-                onPressed: () {
-                  _playAudio();
+                onPressed: () async {
+                  await audioPlayerService.playAudio();
                   print('Playing audio?');
                 },
                 color: Colors.green,
               ),
               IconButton(
                 icon: Icon(Icons.pause),
-                onPressed: _pauseAudio,
+                onPressed: () {
+                  audioPlayerService.pauseAudio();
+                },
                 color: Colors.yellow,
               ),
               IconButton(
                 icon: Icon(Icons.stop),
-                onPressed: _stopAudio,
+                onPressed: () {
+                  audioPlayerService.stopAudio();
+                },
                 color: Colors.red,
               ),
             ],
