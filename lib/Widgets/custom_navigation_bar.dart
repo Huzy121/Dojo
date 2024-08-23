@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'dart:io';
 
 import 'package:dojo/Screens/new_recording.dart';
@@ -14,40 +12,24 @@ import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:io' as io;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CustomNavigationBar extends StatefulWidget {
+class CustomNavigationBar extends HookConsumerWidget {
   @override
-  State<CustomNavigationBar> createState() => _CustomNavigationBarState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRecording = useState(false);
+    final _selectedIndex = useState(0); // Use useState for managing state
 
-class _CustomNavigationBarState extends State<CustomNavigationBar> {
-  bool isRecording = false;
-  int _selectedIndex = 0;
-  AudioRecorderService audioRecorderService = AudioRecorderService();
-  AudioPlayerService audioPlayerService = AudioPlayerService();
-  AudioPlayer audioPlayer = AudioPlayer();
-  io.Directory? audioFilePath;
+    AudioRecorderService audioRecorderService = AudioRecorderService();
+    AudioPlayerService audioPlayerService = AudioPlayerService();
+    AudioPlayer audioPlayer = AudioPlayer();
+    io.Directory? audioFilePath;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+    void _onItemTapped(int index) {
+      _selectedIndex.value = index; // Update the selectedIndex using useState
+    }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white, // Set the background color of the navigation bar
@@ -69,12 +51,12 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
               IconButton(
                 icon: Icon(IonIcons.home),
                 onPressed: () => _onItemTapped(0),
-                color: _selectedIndex == 0 ? Colors.blue : Colors.grey,
+                color: _selectedIndex.value == 0 ? Colors.blue : Colors.grey,
               ),
               IconButton(
                 icon: Icon(IonIcons.search),
                 onPressed: () => _onItemTapped(1),
-                color: _selectedIndex == 1 ? Colors.blue : Colors.grey,
+                color: _selectedIndex.value == 1 ? Colors.blue : Colors.grey,
               ),
               IconButton(
                 icon: Container(
@@ -86,37 +68,34 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                   ),
                 ),
                 onPressed: () async {
-                  if (!isRecording) {
+                  if (!isRecording.value) {
                     print('Starting your recording now!');
-                    setState(() {
-                      isRecording = true;
-                    });
+                    isRecording.value = true;
                     await audioRecorderService.startRecord();
                   } else {
+                    isRecording.value = false;
                     showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
                       builder: (context) => NewRecording(),
                     );
                     print('Stopping your recording now!');
-                    await audioRecorderService.stopRecord();
-                    setState(() {
-                      isRecording = false;
-                    });
+                    await audioRecorderService.stopRecord(ref);
+                    isRecording.value = false;
                   }
                   _onItemTapped(2);
                 },
-                color: _selectedIndex == 2 ? Colors.blue : Colors.red,
+                color: _selectedIndex.value == 2 ? Colors.blue : Colors.red,
               ),
               IconButton(
                 icon: Icon(IonIcons.trophy),
                 onPressed: () => _onItemTapped(3),
-                color: _selectedIndex == 3 ? Colors.blue : Colors.grey,
+                color: _selectedIndex.value == 3 ? Colors.blue : Colors.grey,
               ),
               IconButton(
                 icon: Icon(IonIcons.settings),
                 onPressed: () => _onItemTapped(4),
-                color: _selectedIndex == 4 ? Colors.blue : Colors.grey,
+                color: _selectedIndex.value == 4 ? Colors.blue : Colors.grey,
               ),
             ],
           ),

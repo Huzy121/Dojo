@@ -3,6 +3,8 @@ import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' as io;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dojo/assets/riverpod.dart';
 
 class AudioRecorderService {
   late bool isRecording = false;
@@ -49,7 +51,7 @@ class AudioRecorderService {
       print('Recording pressed.');
       await audioRecorder.start(
         const RecordConfig(),
-        path: '${appDocDirectory!.path}/newrecording12345.m4a',
+        path: '${appDocDirectory!.path}/NewRecording.m4a',
       );
 
       isRecording = await audioRecorder.isRecording();
@@ -77,15 +79,32 @@ class AudioRecorderService {
   }
 
   Future<void> _loadAudioFile() async {
-    audioFilePath = '${appDocDirectory!.path}/newrecording123456.m4a';
+    audioFilePath = '${appDocDirectory!.path}/NewRecording.m4a';
   }
 
-  Future stopRecord() async {
+  /* TODO: Add in checking to make sure name is valid (not empty) otherwise i 
+  guess save it with default naming scheme */
+  Future<void> stopRecord(WidgetRef ref) async {
     await audioRecorder.stop();
     isRecording = await audioRecorder.isRecording();
     print('Path is: ${appDocDirectory!.path}');
     print('Recording stopped');
     print('Status of recording:  $isRecording');
+    String originalFilePath = '${appDocDirectory!.path}/NewRecording.m4a';
+
+    // New file path
+    final recordingName = ref.read(recordingTitleRiverpod);
+    print(recordingName);
+    String newFilePath = '${appDocDirectory!.path}/$recordingName.m4a';
+
+    // Rename the file
+    io.File originalFile = io.File(originalFilePath);
+    if (await originalFile.exists()) {
+      await originalFile.rename(newFilePath);
+      print('Recording file renamed to: $newFilePath');
+    } else {
+      print('Recording file does not exist to rename.');
+    }
   }
 
   io.Directory getPath() {
