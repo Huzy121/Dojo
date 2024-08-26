@@ -84,17 +84,20 @@ class AudioRecorderService {
 
   /* TODO: Add in checking to make sure name is valid (not empty) otherwise i 
   guess save it with default naming scheme */
-  Future<void> stopRecord(WidgetRef ref) async {
+  Future<void> stopRecord() async {
     await audioRecorder.stop();
     isRecording = await audioRecorder.isRecording();
     print('Path is: ${appDocDirectory!.path}');
     print('Recording stopped');
     print('Status of recording:  $isRecording');
+  }
+
+  Future<void> renameAudio(WidgetRef ref) async {
     String originalFilePath = '${appDocDirectory!.path}/NewRecording.m4a';
 
     // New file path
     final recordingName = ref.read(recordingTitleRiverpod);
-    print(recordingName);
+    print('new name ${recordingName}');
     String newFilePath = '${appDocDirectory!.path}/$recordingName.m4a';
 
     // Rename the file

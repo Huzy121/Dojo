@@ -3,11 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dojo/assets/riverpod.dart';
+import 'package:dojo/assets/files_notifier.dart';
 
 class NewRecording extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recordingName = ref.watch(recordingTitleRiverpod);
     return Container(
       width: double.infinity,
       height: 500,
@@ -22,11 +22,18 @@ class NewRecording extends ConsumerWidget {
               autofocus: true,
               onChanged: (newText) {
                 ref.read(recordingTitleRiverpod.notifier).state = newText;
+                print('new text: ${ref.read(recordingTitleRiverpod)}');
               },
             ),
             SizedBox(height: 50.0),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                ref
+                    .read(recordingListProvider.notifier)
+                    .addAudio(ref.read(recordingTitleRiverpod.notifier).state);
+                await ref.read(audioRecorderServiceProvider).renameAudio(ref);
+                print(
+                    'this: ${ref.read(recordingTitleRiverpod.notifier).state}');
                 Navigator.pop(context, ref);
               },
               child: Text('Save'),

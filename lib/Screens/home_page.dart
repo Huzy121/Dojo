@@ -2,18 +2,36 @@
 
 import 'package:dojo/Widgets/custom_navigation_bar.dart';
 import 'package:dojo/assets/constants.dart';
+import 'package:dojo/assets/files_notifier.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-class HomePage extends ConsumerWidget {
+class HomePage extends StatefulHookConsumerWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final recordingList = ref.watch(recordingListFutureProvider);
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   Future.delayed(Duration(seconds: 2), () {
+    //     ref.read(recordingListProvider.notifier).mockLoadFiles();
+    //   });
+    // });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final recordingList = ref.watch(recordingListProvider);
     return Scaffold(
       body: Column(
         children: [
@@ -43,23 +61,15 @@ class HomePage extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: recordingList.when(
-              data: (files) {
-                return PageView.builder(
-                  scrollDirection: Axis.horizontal, // Horizontal scrolling
-                  itemCount: files.length,
-                  itemBuilder: (context, index) {
-                    final file = files[index];
-                    final fileName =
-                        path.basename(file.path).replaceAll('.m4a', '');
-                    return RecordingTile(title: fileName);
-                  },
-                );
+            child: PageView.builder(
+              scrollDirection: Axis.horizontal, // Horizontal scrolling
+              itemCount: recordingList.length,
+              itemBuilder: (context, index) {
+                print('length${recordingList.length}');
+                final file = recordingList[index];
+                final fileName = path.basename(file).replaceAll('.m4a', '');
+                return RecordingTile(title: fileName);
               },
-              loading: () => Center(
-                child: CircularProgressIndicator(),
-              ),
-              error: (error, stack) => Center(child: Text('Error: $error')),
             ),
           ),
           Spacer(), // Add spacer to fill remaining space and push the nav bar to the bottom

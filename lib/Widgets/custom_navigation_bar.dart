@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dojo/Screens/new_recording.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
+import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -20,8 +21,7 @@ class CustomNavigationBar extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isRecording = useState(false);
     final _selectedIndex = useState(0); // Use useState for managing state
-
-    AudioRecorderService audioRecorderService = AudioRecorderService();
+    final audioRecorderService = ref.read(audioRecorderServiceProvider);
     AudioPlayerService audioPlayerService = AudioPlayerService();
     AudioPlayer audioPlayer = AudioPlayer();
     io.Directory? audioFilePath;
@@ -80,7 +80,7 @@ class CustomNavigationBar extends HookConsumerWidget {
                       builder: (context) => NewRecording(),
                     );
                     print('Stopping your recording now!');
-                    await audioRecorderService.stopRecord(ref);
+                    await audioRecorderService.stopRecord();
                     isRecording.value = false;
                   }
                   _onItemTapped(2);
