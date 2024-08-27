@@ -21,19 +21,16 @@ class NewRecording extends ConsumerWidget {
             TextField(
               autofocus: true,
               onChanged: (newText) {
-                ref.read(recordingTitleRiverpod.notifier).state = newText;
+                ref.read(recordingTitleRiverpod.notifier).state = ref
+                    .read(audioRecorderServiceProvider)
+                    .capitalizeEachWord(newText);
                 print('new text: ${ref.read(recordingTitleRiverpod)}');
               },
             ),
             SizedBox(height: 50.0),
             ElevatedButton(
               onPressed: () async {
-                ref
-                    .read(recordingListProvider.notifier)
-                    .addAudio(ref.read(recordingTitleRiverpod.notifier).state);
                 await ref.read(audioRecorderServiceProvider).renameAudio(ref);
-                print(
-                    'this: ${ref.read(recordingTitleRiverpod.notifier).state}');
                 Navigator.pop(context, ref);
               },
               child: Text('Save'),

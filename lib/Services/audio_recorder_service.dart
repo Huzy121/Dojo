@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' as io;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dojo/assets/riverpod.dart';
+import 'package:dojo/assets/files_notifier.dart';
 
 class AudioRecorderService {
   late bool isRecording = false;
@@ -108,9 +109,21 @@ class AudioRecorderService {
     } else {
       print('Recording file does not exist to rename.');
     }
+    ref
+        .read(recordingListProvider.notifier)
+        .addAudio('${ref.read(recordingTitleRiverpod.notifier).state}.m4a');
   }
 
   io.Directory getPath() {
     return appDocDirectory!;
+  }
+
+  String capitalizeEachWord(String input) {
+    if (input.isEmpty) return input; // Return the string if it is empty
+
+    return input.split(' ').map((word) {
+      if (word.isEmpty) return word; // Handle empty words to avoid errors
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
   }
 }

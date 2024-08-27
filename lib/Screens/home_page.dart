@@ -8,8 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:path/path.dart' as path;
 
 class HomePage extends StatefulHookConsumerWidget {
@@ -22,11 +20,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   Future.delayed(Duration(seconds: 2), () {
-    //     ref.read(recordingListProvider.notifier).mockLoadFiles();
-    //   });
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Future.delayed(Duration(seconds: 2), () {
+        ref.read(recordingListProvider.notifier).mockLoadFiles();
+      });
+    });
   }
 
   @override
@@ -62,21 +60,31 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
           Expanded(
             child: PageView.builder(
+              clipBehavior: Clip.none,
+              controller: PageController(
+                viewportFraction:
+                    0.92, // Adjusted to show part of the next tile
+              ),
               scrollDirection: Axis.horizontal, // Horizontal scrolling
               itemCount: recordingList.length,
               itemBuilder: (context, index) {
-                print('length${recordingList.length}');
                 final file = recordingList[index];
                 final fileName = path.basename(file).replaceAll('.m4a', '');
-                return RecordingTile(title: fileName);
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    top: 25.0,
+                  ),
+                  child: RecordingTile(title: fileName),
+                );
               },
             ),
           ),
-          Spacer(), // Add spacer to fill remaining space and push the nav bar to the bottom
+          SizedBox(
+            height: 150.0,
+          ),
         ],
       ),
-      bottomNavigationBar:
-          CustomNavigationBar(), // Fix navigation bar at the bottom
+      bottomNavigationBar: CustomNavigationBar(), // Bottom navigation bar
     );
   }
 }
@@ -95,17 +103,44 @@ class RecordingTile extends StatelessWidget {
         print('Tapped on: $title');
       },
       child: Container(
-        height: 700.0, // Fixed height for each tile
         width: double.infinity, // Takes full width of the screen
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         decoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white, // Set a background color for the card
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFFFE4E1), // Light pink
+              Color(0xFFFFDAB9), // Peach puff (slightly orange hue)
+              Color(0xFFFFC1C1), // Slightly darker pink
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1), // Shadow color
+              spreadRadius:
+                  0.5, // Reduced spread radius for a more subtle shadow
+              blurRadius: 15, // Increased blur radius for a softer shadow
+              offset: Offset(0, 5), // Slightly downward and balanced shadow
+            ),
+          ],
         ),
-        alignment: Alignment.center,
-        child: Text(
-          title,
-          style: kRecordingTitle,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 12.0,
+            left: 20.0,
+            right: 20.0,
+          ), // Add some padding to the text
+          child: Align(
+            alignment: Alignment.topLeft, // Align text to the top left
+            child: Text(
+              title,
+              style: kRecordingTitle,
+            ),
+          ),
         ),
       ),
     );

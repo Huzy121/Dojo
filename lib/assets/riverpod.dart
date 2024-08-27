@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dojo/Services/audio_recorder_service.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final audioRecorderServiceProvider = Provider<AudioRecorderService>((ref) {

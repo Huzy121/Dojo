@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DOJO',
       theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFFFFF9F1),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),

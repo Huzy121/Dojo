@@ -67,6 +67,6 @@ class RecordingListNotifier extends Notifier<List<String>> {
       'Coronary Artery Disease',
     ];
     state = [];
-    //state = [...medicalConditions];
+    state = [...medicalConditions];
   }
 }
