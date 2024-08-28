@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unnecessary_import, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last
 
 import 'package:dojo/Screens/new_recording.dart';
+import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Widgets/custom_navigation_bar.dart';
 import 'package:dojo/assets/constants.dart';
 import 'package:dojo/assets/files_notifier.dart';
@@ -22,11 +23,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Future.delayed(Duration(seconds: 2), () {
-        ref.read(recordingListProvider.notifier).mockLoadFiles();
-      });
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   Future.delayed(Duration(seconds: 2), () {
+    //     ref.read(recordingListProvider.notifier).mockLoadFiles();
+    //   });
+    // });
   }
 
   @override
@@ -100,9 +101,14 @@ class RecordingTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final audioPlayer = ref.watch(audioPlayerServiceProvider);
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        ref.read(audioPlayerServiceProvider.notifier).state =
+            AudioPlayerService();
         ref.read(currentlyPlayingProvider.notifier).state = title;
+        final Duration? duration = await audioPlayer.getDuration(ref);
+        ref.read(audioDurationProvider.notifier).state = duration!;
         showModalBottomSheet(
           context: context,
           isScrollControlled: true, // Allows the sheet to be taller

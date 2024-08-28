@@ -1,13 +1,30 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
+import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final audioPlayerServiceProvider = StateProvider<AudioPlayerService>((ref) {
+  return AudioPlayerService();
+});
+
+final audioDurationProvider = StateProvider<Duration>((ref) {
+  return Duration();
+});
+
+final positionProvider = StreamProvider.autoDispose<Duration>((ref) {
+  final audioPlayerService = ref.watch(audioPlayerServiceProvider);
+
+  return audioPlayerService.onPositionChanged;
+});
 
 final currentlyPlayingProvider = StateProvider<String>((ref) {
   return '';
 });
 
-final audioRecorderServiceProvider = Provider<AudioRecorderService>((ref) {
-  return new AudioRecorderService();
+final audioRecorderServiceProvider = StateProvider<AudioRecorderService>((ref) {
+  return AudioRecorderService();
 });
 
 final localDirectoryProvider = Provider<String>((ref) {
