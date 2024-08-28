@@ -108,38 +108,7 @@ class RecordingTile extends ConsumerWidget {
           isScrollControlled: true, // Allows the sheet to be taller
           backgroundColor:
               Colors.transparent, // Transparent background for floating effect
-          builder: (BuildContext context) {
-            return Padding(
-              padding: const EdgeInsets.only(
-                left: 20.0,
-                right: 20.0,
-                bottom:
-                    20.0, // Padding to make it look detached from the bottom
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.0), // Rounded corners
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1), // Shadow color
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                      offset:
-                          Offset(0, 4), // Downward shadow for floating effect
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.all(16.0), // Padding inside the modal
-                  child: SingleChildScrollView(
-                    child: AudioPlayer(), // Your NewRecording widget
-                  ),
-                ),
-              ),
-            );
-          },
+          builder: (context) => AudioPlayer(),
         );
 
         print('Tapped on: ${ref.read(currentlyPlayingProvider)}');

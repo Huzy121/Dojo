@@ -78,41 +78,7 @@ class CustomNavigationBar extends HookConsumerWidget {
                             true, // Allows the sheet to be taller
                         backgroundColor: Colors
                             .transparent, // Transparent background for floating effect
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              left: 10.0,
-                              right: 10.0,
-                              bottom:
-                                  40.0, // Padding to make it look detached from the bottom
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                    20.0), // Rounded corners
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black
-                                        .withOpacity(0.1), // Shadow color
-                                    spreadRadius: 2,
-                                    blurRadius: 10,
-                                    offset: Offset(0,
-                                        4), // Downward shadow for floating effect
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(
-                                    16.0), // Padding inside the modal
-                                child: SingleChildScrollView(
-                                  child:
-                                      NewRecording(), // Your NewRecording widget
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                        builder: (context) => NewRecording(),
                       );
 
                       await audioRecorderService.stopRecord();
@@ -129,7 +95,9 @@ class CustomNavigationBar extends HookConsumerWidget {
                 ),
                 IconButton(
                   icon: Icon(IonIcons.settings),
-                  onPressed: () => _onItemTapped(4),
+                  onPressed: () {
+                    _onItemTapped(4);
+                  },
                   color: _selectedIndex.value == 4 ? Colors.blue : Colors.grey,
                 ),
               ],
