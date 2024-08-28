@@ -2,6 +2,10 @@ import 'dart:io';
 import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final currentlyPlayingProvider = StateProvider<String>((ref) {
+  return '';
+});
+
 final audioRecorderServiceProvider = Provider<AudioRecorderService>((ref) {
   return new AudioRecorderService();
 });
@@ -11,7 +15,7 @@ final localDirectoryProvider = Provider<String>((ref) {
   return '';
 });
 
-final recordingTitleRiverpod = StateProvider<String>((ref) {
+final recordingTitleProvider = StateProvider<String>((ref) {
   return 'NewRecording.m4a';
 });
 

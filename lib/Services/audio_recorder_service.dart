@@ -97,7 +97,7 @@ class AudioRecorderService {
     String originalFilePath = '${appDocDirectory!.path}/NewRecording.m4a';
 
     // New file path
-    final recordingName = ref.read(recordingTitleRiverpod);
+    final recordingName = ref.read(recordingTitleProvider);
     print('new name ${recordingName}');
     String newFilePath = '${appDocDirectory!.path}/$recordingName.m4a';
 
@@ -111,7 +111,7 @@ class AudioRecorderService {
     }
     ref
         .read(recordingListProvider.notifier)
-        .addAudio('${ref.read(recordingTitleRiverpod.notifier).state}.m4a');
+        .addAudio('${ref.read(recordingTitleProvider.notifier).state}.m4a');
   }
 
   io.Directory getPath() {

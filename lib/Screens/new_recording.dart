@@ -10,7 +10,7 @@ class NewRecording extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
-      height: 500,
+      height: 400,
       child: Container(
         padding: EdgeInsets.all(20.0),
         child: Column(
@@ -21,10 +21,10 @@ class NewRecording extends ConsumerWidget {
             TextField(
               autofocus: true,
               onChanged: (newText) {
-                ref.read(recordingTitleRiverpod.notifier).state = ref
+                ref.read(recordingTitleProvider.notifier).state = ref
                     .read(audioRecorderServiceProvider)
                     .capitalizeEachWord(newText);
-                print('new text: ${ref.read(recordingTitleRiverpod)}');
+                print('new text: ${ref.read(recordingTitleProvider)}');
               },
             ),
             SizedBox(height: 50.0),

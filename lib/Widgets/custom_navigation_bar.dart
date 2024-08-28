@@ -21,9 +21,13 @@ class CustomNavigationBar extends HookConsumerWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 19.0), // Add horizontal padding for floating effect
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        bottom:
+            20.0, // Add bottom padding for the gap between the navbar and the bottom of the screen
+        top: 8.0,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white, // Set the background color of the navigation bar
@@ -69,9 +73,46 @@ class CustomNavigationBar extends HookConsumerWidget {
                     } else {
                       isRecording.value = false;
                       showModalBottomSheet(
-                        isScrollControlled: true,
                         context: context,
-                        builder: (context) => NewRecording(),
+                        isScrollControlled:
+                            true, // Allows the sheet to be taller
+                        backgroundColor: Colors
+                            .transparent, // Transparent background for floating effect
+                        builder: (BuildContext context) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              left: 10.0,
+                              right: 10.0,
+                              bottom:
+                                  40.0, // Padding to make it look detached from the bottom
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                    20.0), // Rounded corners
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    offset: Offset(0,
+                                        4), // Downward shadow for floating effect
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(
+                                    16.0), // Padding inside the modal
+                                child: SingleChildScrollView(
+                                  child:
+                                      NewRecording(), // Your NewRecording widget
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       );
 
                       await audioRecorderService.stopRecord();
@@ -93,33 +134,34 @@ class CustomNavigationBar extends HookConsumerWidget {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.play_arrow),
-                  onPressed: () async {
-                    await audioPlayerService.playAudio();
-                    print('Playing audio?');
-                  },
-                  color: Colors.green,
-                ),
-                IconButton(
-                  icon: Icon(Icons.pause),
-                  onPressed: () {
-                    audioPlayerService.pauseAudio();
-                  },
-                  color: Colors.yellow,
-                ),
-                IconButton(
-                  icon: Icon(Icons.stop),
-                  onPressed: () {
-                    audioPlayerService.stopAudio();
-                  },
-                  color: Colors.red,
-                ),
-              ],
-            ),
+            // Commented out the play, pause, and stop buttons
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     IconButton(
+            //       icon: Icon(Icons.play_arrow),
+            //       onPressed: () async {
+            //         await audioPlayerService.playAudio();
+            //         print('Playing audio?');
+            //       },
+            //       color: Colors.green,
+            //     ),
+            //     IconButton(
+            //       icon: Icon(Icons.pause),
+            //       onPressed: () {
+            //         audioPlayerService.pauseAudio();
+            //       },
+            //       color: Colors.yellow,
+            //     ),
+            //     IconButton(
+            //       icon: Icon(Icons.stop),
+            //       onPressed: () {
+            //         audioPlayerService.stopAudio();
+            //       },
+            //       color: Colors.red,
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

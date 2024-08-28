@@ -5,6 +5,7 @@ import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +13,8 @@ void main() async {
   final Directory? localDir = Platform.isIOS
       ? await getApplicationDocumentsDirectory()
       : await getExternalStorageDirectory();
-
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom]);
   runApp(
     ProviderScope(
       overrides: [
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'DOJO',
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xFFFFF9F1),

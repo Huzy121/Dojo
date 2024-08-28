@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unnecessary_import, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last
 
+import 'package:dojo/Screens/new_recording.dart';
 import 'package:dojo/Widgets/custom_navigation_bar.dart';
 import 'package:dojo/assets/constants.dart';
 import 'package:dojo/assets/files_notifier.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as path;
+import 'audio_player.dart';
 
 class HomePage extends StatefulHookConsumerWidget {
   @override
@@ -89,7 +91,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-class RecordingTile extends StatelessWidget {
+class RecordingTile extends ConsumerWidget {
   final String title;
   const RecordingTile({
     Key? key,
@@ -97,10 +99,50 @@ class RecordingTile extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
-        print('Tapped on: $title');
+        ref.read(currentlyPlayingProvider.notifier).state = title;
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true, // Allows the sheet to be taller
+          backgroundColor:
+              Colors.transparent, // Transparent background for floating effect
+          builder: (BuildContext context) {
+            return Padding(
+              padding: const EdgeInsets.only(
+                left: 20.0,
+                right: 20.0,
+                bottom:
+                    20.0, // Padding to make it look detached from the bottom
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.0), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1), // Shadow color
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset:
+                          Offset(0, 4), // Downward shadow for floating effect
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.all(16.0), // Padding inside the modal
+                  child: SingleChildScrollView(
+                    child: AudioPlayer(), // Your NewRecording widget
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+
+        print('Tapped on: ${ref.read(currentlyPlayingProvider)}');
       },
       child: Container(
         width: double.infinity, // Takes full width of the screen
