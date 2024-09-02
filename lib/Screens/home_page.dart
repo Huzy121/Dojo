@@ -107,8 +107,8 @@ class RecordingTile extends ConsumerWidget {
         ref.read(audioPlayerServiceProvider.notifier).state =
             AudioPlayerService();
         ref.read(currentlyPlayingProvider.notifier).state = title;
-        final Duration? duration = await audioPlayer.getDuration(ref);
-        ref.read(audioDurationProvider.notifier).state = duration!;
+        ref.read(audioDurationProvider.notifier).state =
+            await audioPlayer.getDuration(ref) ?? Duration.zero;
         showModalBottomSheet(
           context: context,
           isScrollControlled: true, // Allows the sheet to be taller

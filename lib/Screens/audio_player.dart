@@ -1,26 +1,48 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class AudioPlayer extends ConsumerWidget {
+class AudioPlayer extends ConsumerStatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _AudioPlayerState createState() => _AudioPlayerState();
+}
+
+class _AudioPlayerState extends ConsumerState<AudioPlayer> {
+  Stream<Duration>? _positionStream;
+  
+  @override
+  void initState() {
+    super.initState();
+    _positionStream =
+        ref.read(audioPlayerServiceProvider).audioPlayer.onPositionChanged;
+    ref
+        .read(audioPlayerServiceProvider)
+        .audioPlayer
+        .onPlayerComplete
+        .listen((event) {
+      ref.read(isPlayingProvider.notifier).state = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final audioPlayerService = ref.watch(audioPlayerServiceProvider);
     final progressValue = ref.watch(positionProvider);
     final totalDuration = ref.watch(audioDurationProvider);
+    final isPlaying = ref.watch(isPlayingProvider);
     print('Total Duration: $totalDuration');
-    final audioPlayer = ref.watch(audioPlayerServiceProvider);
     Duration progress = Duration.zero;
-    
+
     if (progressValue is AsyncData) {
       progress = progressValue.value!;
     }
-    
+
     // Print statements to debug progress and duration
     print('Current Progress: $progress');
     print('Total Duration: $totalDuration');
@@ -57,8 +79,7 @@ class AudioPlayer extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     StreamBuilder<Duration>(
-                      stream: audioPlayerService
-                          .onPositionChanged, // Listen to the position stream
+                      stream: _positionStream, // Listen to the position stream
                       builder: (context, snapshot) {
                         // If the snapshot has data, use it; otherwise, default to zero
                         Duration progress = snapshot.data ?? Duration.zero;
@@ -94,9 +115,14 @@ class AudioPlayer extends ConsumerWidget {
                         ),
                         SizedBox(width: 15.0),
                         IconButton(
-                          icon: Icon(IonIcons.play),
+                          icon:
+                              Icon(isPlaying ? IonIcons.pause : IonIcons.play),
                           onPressed: () async {
-                            await audioPlayer.playAudio(ref);
+                            ref.read(isPlayingProvider.notifier).state =
+                                !ref.read(isPlayingProvider);
+                            !isPlaying
+                                ? await audioPlayerService.playAudio(ref)
+                                : await audioPlayerService.pauseAudio();
                           },
                         ),
                         SizedBox(width: 15.0),

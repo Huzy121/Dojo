@@ -5,11 +5,16 @@ import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final isPlayingProvider = StateProvider<bool>((ref) {
+  return false;
+});
+
 final audioPlayerServiceProvider = StateProvider<AudioPlayerService>((ref) {
   return AudioPlayerService();
 });
 
 final audioDurationProvider = StateProvider<Duration>((ref) {
+  final currentAudio = ref.watch(currentlyPlayingProvider);
   return Duration();
 });
 
