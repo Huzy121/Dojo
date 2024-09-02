@@ -5,6 +5,10 @@ import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final volumeProvider = StateProvider<double>((ref) {
+  return 0.5;
+});
+
 final isPlayingProvider = StateProvider<bool>((ref) {
   return false;
 });

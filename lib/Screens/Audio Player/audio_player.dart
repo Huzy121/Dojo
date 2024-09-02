@@ -1,12 +1,16 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+
+import 'Widgets/audio_player_icon.dart';
+import 'Widgets/stream_slider.dart';
+import 'Widgets/volume_slider.dart';
+import 'audio_player_constants.dart';
 
 class AudioPlayer extends ConsumerStatefulWidget {
   @override
@@ -15,7 +19,7 @@ class AudioPlayer extends ConsumerStatefulWidget {
 
 class _AudioPlayerState extends ConsumerState<AudioPlayer> {
   Stream<Duration>? _positionStream;
-  
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +40,7 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
     final progressValue = ref.watch(positionProvider);
     final totalDuration = ref.watch(audioDurationProvider);
     final isPlaying = ref.watch(isPlayingProvider);
+    final volume = ref.watch(volumeProvider);
     print('Total Duration: $totalDuration');
     Duration progress = Duration.zero;
 
@@ -55,7 +60,7 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color(0xFFFFF9F1),
           borderRadius: BorderRadius.circular(20.0), // Rounded corners
           boxShadow: [
             BoxShadow(
@@ -78,31 +83,16 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    StreamBuilder<Duration>(
-                      stream: _positionStream, // Listen to the position stream
-                      builder: (context, snapshot) {
-                        // If the snapshot has data, use it; otherwise, default to zero
-                        Duration progress = snapshot.data ?? Duration.zero;
-
-                        // Debug prints for StreamBuilder data
-                        print('StreamBuilder Progress: $progress');
-
-                        return ProgressBar(
-                          onSeek: (duration) {
-                            ref
-                                .read(audioPlayerServiceProvider)
-                                .seekTo(duration);
-                          },
-                          onDragEnd: () => audioPlayerService.playAudio(ref),
-                          progress: progress,
-                          total: totalDuration, // Total duration of the audio
-                        );
-                      },
+                    StreamSlider(
+                      positionStream: _positionStream,
+                      ref: ref,
+                      audioPlayerService: audioPlayerService,
+                      totalDuration: totalDuration,
                     ),
-                    SizedBox(
-                      height: 10,
+                    Text(
+                      ref.read(currentlyPlayingProvider),
+                      style: audioPlayerTitle,
                     ),
-                    Text(ref.read(currentlyPlayingProvider)),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -110,13 +100,18 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          icon: Icon(IonIcons.arrow_back_circle),
+                          icon: audioPlayerIcon(
+                            phosphorIcon: PhosphorIcons.skipBack(),
+                          ),
                           onPressed: () {},
                         ),
                         SizedBox(width: 15.0),
                         IconButton(
-                          icon:
-                              Icon(isPlaying ? IonIcons.pause : IonIcons.play),
+                          icon: audioPlayerIcon(
+                            phosphorIcon: isPlaying
+                                ? PhosphorIcons.pause()
+                                : PhosphorIcons.play(),
+                          ),
                           onPressed: () async {
                             ref.read(isPlayingProvider.notifier).state =
                                 !ref.read(isPlayingProvider);
@@ -127,7 +122,8 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                         ),
                         SizedBox(width: 15.0),
                         IconButton(
-                          icon: Icon(IonIcons.arrow_forward_circle),
+                          icon: audioPlayerIcon(
+                              phosphorIcon: PhosphorIcons.skipForward()),
                           onPressed: () {},
                         ),
                       ],
@@ -138,9 +134,20 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Volume Icon'),
-                        SizedBox(width: 15.0),
-                        Text('Volume Slider'),
+                        Icon(
+                          volume > 0.55
+                              ? PhosphorIcons
+                                  .speakerSimpleHigh() // Use this icon if volume is greater than 0.7
+                              : volume > 0.1
+                                  ? PhosphorIcons
+                                      .speakerSimpleLow() // Use this icon if volume is between 0.3 and 0.7
+                                  : PhosphorIcons.speakerSimpleNone(),
+                          color: audioPlayerIcons,
+                        ),
+                        VolumeSlider(
+                            volume: volume,
+                            ref: ref,
+                            audioPlayerService: audioPlayerService),
                       ],
                     ),
                   ],

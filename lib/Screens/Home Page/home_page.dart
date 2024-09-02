@@ -1,17 +1,16 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unnecessary_import, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last
 
-import 'package:dojo/Screens/new_recording.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Widgets/custom_navigation_bar.dart';
-import 'package:dojo/assets/constants.dart';
-import 'package:dojo/assets/files_notifier.dart';
+import 'home_page_constants.dart';
+import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as path;
-import 'audio_player.dart';
+import '../Audio Player/audio_player.dart';
 
 class HomePage extends StatefulHookConsumerWidget {
   @override

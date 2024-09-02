@@ -5,7 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' as io;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dojo/assets/riverpod.dart';
-import 'package:dojo/assets/files_notifier.dart';
+import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 
 class AudioRecorderService {
   late bool isRecording = false;

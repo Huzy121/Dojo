@@ -1,12 +1,10 @@
-import 'package:dojo/Screens/new_recording.dart';
+import 'package:dojo/Screens/New%20Recording/new_recording.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/assets/riverpod.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
-import 'dart:io' as io;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CustomNavigationBar extends HookConsumerWidget {
   @override
@@ -30,7 +28,8 @@ class CustomNavigationBar extends HookConsumerWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, // Set the background color of the navigation bar
+          color: Color(
+              0xFFFFF9F1), // Set the background color of the navigation bar
           borderRadius: BorderRadius.circular(20.0), // Rounded corners
           boxShadow: [
             BoxShadow(
@@ -48,14 +47,18 @@ class CustomNavigationBar extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 IconButton(
-                  icon: Icon(IonIcons.home),
+                  icon: Icon(PhosphorIcons.houseSimple()),
                   onPressed: () => _onItemTapped(0),
-                  color: _selectedIndex.value == 0 ? Colors.blue : Colors.grey,
+                  color: _selectedIndex.value == 0
+                      ? Color(0xFFB3714A)
+                      : Color(0xFFE2B893),
                 ),
                 IconButton(
-                  icon: Icon(IonIcons.search),
+                  icon: Icon(PhosphorIcons.magnifyingGlass()),
                   onPressed: () => _onItemTapped(1),
-                  color: _selectedIndex.value == 1 ? Colors.blue : Colors.grey,
+                  color: _selectedIndex.value == 1
+                      ? Color(0xFFB3714A)
+                      : Color(0xFFE2B893),
                 ),
                 IconButton(
                   icon: Container(
@@ -63,7 +66,7 @@ class CustomNavigationBar extends HookConsumerWidget {
                     width: 50.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.red,
+                      color: Color(0xFFB26767),
                     ),
                   ),
                   onPressed: () async {
@@ -86,19 +89,25 @@ class CustomNavigationBar extends HookConsumerWidget {
                     }
                     _onItemTapped(2);
                   },
-                  color: _selectedIndex.value == 2 ? Colors.blue : Colors.red,
+                  color: _selectedIndex.value == 2
+                      ? Color(0xFFD95C5C)
+                      : Color(0xFFD95C5C),
                 ),
                 IconButton(
-                  icon: Icon(IonIcons.trophy),
+                  icon: Icon(PhosphorIcons.trophy()),
                   onPressed: () => _onItemTapped(3),
-                  color: _selectedIndex.value == 3 ? Colors.blue : Colors.grey,
+                  color: _selectedIndex.value == 3
+                      ? Color(0xFFB3714A)
+                      : Color(0xFFE2B893),
                 ),
                 IconButton(
-                  icon: Icon(IonIcons.settings),
+                  icon: Icon(PhosphorIcons.gearSix()),
                   onPressed: () {
                     _onItemTapped(4);
                   },
-                  color: _selectedIndex.value == 4 ? Colors.blue : Colors.grey,
+                  color: _selectedIndex.value == 4
+                      ? Color(0xFFB3714A)
+                      : Color(0xFFE2B893),
                 ),
               ],
             ),

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dojo/Screens/home_page.dart';
+import 'package:dojo/Screens/Home%20Page/home_page.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
