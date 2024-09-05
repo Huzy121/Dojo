@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unnecessary_import, use_key_in_widget_constructors, library_private_types_in_public_api, sort_child_properties_last
 
 import 'package:dojo/Services/audio_player_service.dart';
-import 'package:dojo/Widgets/custom_navigation_bar.dart';
+import 'package:dojo/Screens/Home%20Page/Widgets/custom_navigation_bar.dart';
 import 'home_page_constants.dart';
 import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 import 'package:dojo/assets/riverpod.dart';

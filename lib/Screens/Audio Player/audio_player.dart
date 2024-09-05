@@ -88,6 +88,7 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                       ref: ref,
                       audioPlayerService: audioPlayerService,
                       totalDuration: totalDuration,
+                      isPlaying: isPlaying,
                     ),
                     Text(
                       ref.read(currentlyPlayingProvider),

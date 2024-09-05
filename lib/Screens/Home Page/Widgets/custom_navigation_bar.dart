@@ -87,7 +87,6 @@ class CustomNavigationBar extends HookConsumerWidget {
                       await audioRecorderService.stopRecord();
                       isRecording.value = false;
                     }
-                    _onItemTapped(2);
                   },
                   color: _selectedIndex.value == 2
                       ? Color(0xFFD95C5C)
@@ -111,34 +110,6 @@ class CustomNavigationBar extends HookConsumerWidget {
                 ),
               ],
             ),
-            // Commented out the play, pause, and stop buttons
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //   children: [
-            //     IconButton(
-            //       icon: Icon(Icons.play_arrow),
-            //       onPressed: () async {
-            //         await audioPlayerService.playAudio();
-            //         print('Playing audio?');
-            //       },
-            //       color: Colors.green,
-            //     ),
-            //     IconButton(
-            //       icon: Icon(Icons.pause),
-            //       onPressed: () {
-            //         audioPlayerService.pauseAudio();
-            //       },
-            //       color: Colors.yellow,
-            //     ),
-            //     IconButton(
-            //       icon: Icon(Icons.stop),
-            //       onPressed: () {
-            //         audioPlayerService.stopAudio();
-            //       },
-            //       color: Colors.red,
-            //     ),
-            //   ],
-            // ),
           ],
         ),
       ),

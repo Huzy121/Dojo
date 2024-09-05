@@ -42,7 +42,7 @@ final localDirectoryProvider = Provider<String>((ref) {
 });
 
 final recordingTitleProvider = StateProvider<String>((ref) {
-  return 'NewRecording.m4a';
+  return '';
 });
 
 final isRecordingProvider = StateProvider<bool>((ref) {

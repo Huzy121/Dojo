@@ -29,6 +29,7 @@ dependencies:
   audio_video_progress_bar: ^2.0.3
   phosphor_flutter: ^2.1.0
   google_fonts: ^6.2.1
+  fluttertoast: ^8.2.8
   
 
 dev_dependencies:

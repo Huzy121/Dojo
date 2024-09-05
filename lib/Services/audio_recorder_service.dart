@@ -112,6 +112,7 @@ class AudioRecorderService {
     ref
         .read(recordingListProvider.notifier)
         .addAudio('${ref.read(recordingTitleProvider.notifier).state}.m4a');
+    ref.read(recordingTitleProvider.notifier).state = '';
   }
 
   io.Directory getPath() {

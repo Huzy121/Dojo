@@ -14,8 +14,10 @@ class StreamSlider extends StatelessWidget {
     required this.ref,
     required this.audioPlayerService,
     required this.totalDuration,
+    required this.isPlaying,
   }) : _positionStream = positionStream;
 
+  final bool isPlaying;
   final Stream<Duration>? _positionStream;
   final WidgetRef ref;
   final AudioPlayerService audioPlayerService;
@@ -28,21 +30,21 @@ class StreamSlider extends StatelessWidget {
       builder: (context, snapshot) {
         // If the snapshot has data, use it; otherwise, default to zero
         Duration progress = snapshot.data ?? Duration.zero;
-    
+
         // Debug prints for StreamBuilder data
         print('StreamBuilder Progress: $progress');
-    
+
         return ProgressBar(
           thumbRadius: 5.0,
           thumbColor: Color(0xFFD9A87A),
           progressBarColor: Color(0xFFE2B893),
           timeLabelTextStyle: audioPlayerTitle,
           onSeek: (duration) {
-            ref
-                .read(audioPlayerServiceProvider)
-                .seekTo(duration);
+            ref.read(audioPlayerServiceProvider).seekTo(duration);
           },
-          onDragEnd: () => audioPlayerService.playAudio(ref),
+          onDragEnd: () => isPlaying
+              ? audioPlayerService.playAudio(ref)
+              : audioPlayerService.pauseAudio(),
           progress: progress,
           total: totalDuration, // Total duration of the audio
         );
