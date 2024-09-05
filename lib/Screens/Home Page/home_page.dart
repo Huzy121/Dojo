@@ -32,6 +32,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final recordingList = ref.watch(recordingListProvider);
+    final pageController = ref.watch(pageViewControllerProvider);
     return Scaffold(
       body: Column(
         children: [
@@ -63,10 +64,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           Expanded(
             child: PageView.builder(
               clipBehavior: Clip.none,
-              controller: PageController(
-                viewportFraction:
-                    0.92, // Adjusted to show part of the next tile
-              ),
+              controller: pageController,
               scrollDirection: Axis.horizontal, // Horizontal scrolling
               itemCount: recordingList.length,
               itemBuilder: (context, index) {

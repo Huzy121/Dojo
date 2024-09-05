@@ -21,6 +21,7 @@ class AudioPlayerService {
 
   Future<void> playAudio(WidgetRef ref) async {
     final audioFile = ref.watch(currentlyPlayingProvider);
+    print('Audio Playing: ${audioFile}');
     try {
       // Wait for initialization if it's not completed yet
       if (audioFilePath == null) {

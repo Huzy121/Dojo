@@ -3,7 +3,12 @@
 import 'dart:io';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final pageViewControllerProvider = Provider<PageController>((ref) {
+  return PageController(viewportFraction: 0.92);
+});
 
 final volumeProvider = StateProvider<double>((ref) {
   return 0.5;
@@ -18,7 +23,6 @@ final audioPlayerServiceProvider = StateProvider<AudioPlayerService>((ref) {
 });
 
 final audioDurationProvider = StateProvider<Duration>((ref) {
-  final currentAudio = ref.watch(currentlyPlayingProvider);
   return Duration();
 });
 

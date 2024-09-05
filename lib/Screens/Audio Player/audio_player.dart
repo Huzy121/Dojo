@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +37,16 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final audioPlayerService = ref.watch(audioPlayerServiceProvider);
+    final audioPlayerService = ref.read(audioPlayerServiceProvider);
+    final pageController = ref.read(pageViewControllerProvider);
+    final recordingList = ref.read(recordingListProvider);
+    final audioPlayer = ref.read(audioPlayerServiceProvider);
+
     final progressValue = ref.watch(positionProvider);
     final totalDuration = ref.watch(audioDurationProvider);
     final isPlaying = ref.watch(isPlayingProvider);
     final volume = ref.watch(volumeProvider);
+    final currentlyPlaying = ref.watch(currentlyPlayingProvider);
     print('Total Duration: $totalDuration');
     Duration progress = Duration.zero;
 
@@ -91,7 +97,7 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                       isPlaying: isPlaying,
                     ),
                     Text(
-                      ref.read(currentlyPlayingProvider),
+                      currentlyPlaying,
                       style: audioPlayerTitle,
                     ),
                     SizedBox(
@@ -104,7 +110,29 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                           icon: audioPlayerIcon(
                             phosphorIcon: PhosphorIcons.skipBack(),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            final currentPage =
+                                pageController.page?.toInt() ?? 0;
+
+                            final prevPage = currentPage - 1;
+
+                            if (prevPage >= 0) {
+                              // Scroll to the next page in the PageView
+                              pageController.previousPage(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeIn,
+                              );
+                              ref
+                                      .read(currentlyPlayingProvider.notifier)
+                                      .state =
+                                  recordingList[prevPage]
+                                      .replaceAll('.m4a', '');
+                              ref.read(audioDurationProvider.notifier).state =
+                                  await audioPlayer.getDuration(ref) ??
+                                      Duration.zero;
+                              print('Playing now: ${recordingList[prevPage]}');
+                            }
+                          },
                         ),
                         SizedBox(width: 15.0),
                         IconButton(
@@ -114,6 +142,7 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                                 : PhosphorIcons.play(),
                           ),
                           onPressed: () async {
+                            print('D: $totalDuration');
                             ref.read(isPlayingProvider.notifier).state =
                                 !ref.read(isPlayingProvider);
                             !isPlaying
@@ -125,7 +154,29 @@ class _AudioPlayerState extends ConsumerState<AudioPlayer> {
                         IconButton(
                           icon: audioPlayerIcon(
                               phosphorIcon: PhosphorIcons.skipForward()),
-                          onPressed: () {},
+                          onPressed: () async {
+                            final currentPage =
+                                pageController.page?.toInt() ?? 0;
+
+                            final nextPage = currentPage + 1;
+
+                            if (nextPage < recordingList.length) {
+                              // Scroll to the next page in the PageView
+                              pageController.nextPage(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeIn,
+                              );
+                              ref
+                                      .read(currentlyPlayingProvider.notifier)
+                                      .state =
+                                  recordingList[nextPage]
+                                      .replaceAll('.m4a', '');
+                              ref.read(audioDurationProvider.notifier).state =
+                                  await audioPlayer.getDuration(ref) ??
+                                      Duration.zero;
+                              print('Playing now: ${recordingList[nextPage]}');
+                            }
+                          },
                         ),
                       ],
                     ),
