@@ -1,4 +1,5 @@
 import 'package:dojo/Screens/New%20Recording/new_recording.dart';
+import 'package:dojo/Screens/Search/search_page.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,10 @@ class CustomNavigationBar extends HookConsumerWidget {
                 ),
                 IconButton(
                   icon: Icon(PhosphorIcons.magnifyingGlass()),
-                  onPressed: () => _onItemTapped(1),
+                  onPressed: () {
+                    _onItemTapped(1);
+                    Navigator.pushNamed(context, '/search');
+                  },
                   color: _selectedIndex.value == 1
                       ? Color(0xFFB3714A)
                       : Color(0xFFE2B893),
