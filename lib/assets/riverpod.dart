@@ -6,6 +6,18 @@ import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final searchControllerProvider = StateProvider<TextEditingController>((ref) {
+  print('search QP: $searchQueryProvider');
+  return searchQueryProvider == 'StateProvider<String>#48ec2'
+      ? TextEditingController()
+      : TextEditingController(text: ref.read(searchQueryProvider));
+  //return TextEditingController(text: searchQueryProvider.toString());
+});
+
+final searchQueryProvider = StateProvider<String>((ref) {
+  return '';
+});
+
 final pageViewControllerProvider = Provider<PageController>((ref) {
   return PageController(viewportFraction: 0.92);
 });
