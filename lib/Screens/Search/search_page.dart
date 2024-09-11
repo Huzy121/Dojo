@@ -12,53 +12,70 @@ class SearchPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recordingList = ref.read(recordingListProvider);
-    final searchQuery = ref.watch(searchQueryProvider);
     final searchController = ref.read(searchControllerProvider);
+    final filteredListProvider = ref.watch(filteredAudioListProvider);
+    final pageController = ref.read(pageViewControllerProvider);
     return Scaffold(
       body: Column(
         children: [
-          TextField(
-            autofocus: true,
-            controller: searchController,
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                icon: Icon(PhosphorIcons.x()),
-                onPressed: () {
-                  searchController.clear();
-                  ref.read(searchQueryProvider.notifier).state = '';
-                },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              autofocus: true,
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search...', // Optional hint text
+                filled: true,
+                fillColor: Colors
+                    .transparent, // Background color to give it a "floating" look
+                suffixIcon: IconButton(
+                  icon: Icon(PhosphorIcons.x()),
+                  onPressed: () {
+                    searchController.clear();
+                    ref.read(searchQueryProvider.notifier).state = '';
+                  },
+                ),
+                // Apply rounded borders for the floating style
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0), // Rounded corners
+                  borderSide:
+                      BorderSide(color: Color(0xFFB3714A)), // No visible border
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFFB3714A), // Optional color when focused
+                    width: 2.0, // Thicker border when focused
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 15.0,
+                    horizontal:
+                        20.0), // Adjust the padding for a comfortable look
               ),
+              onChanged: (value) {
+                ref.read(searchQueryProvider.notifier).state = value;
+                print('search: $value');
+              },
             ),
-            onChanged: (value) {
-              ref.read(searchQueryProvider.notifier).state = value;
-              FocusScope.of(context).autofocus;
-              print('search: $value');
-            },
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: recordingList.length,
+              itemCount: filteredListProvider.length,
               itemBuilder: (context, index) {
-                final recording = recordingList[index];
-                print('recording $recording');
-                if (searchQuery == '') {
-                  return ListTile(
-                    title: Text(recording.replaceAll('.m4a', '')),
-                    onTap: () {},
-                  );
-                } else {
-                  if (recording
-                      .toLowerCase()
-                      .contains(searchQuery.toLowerCase())) {
-                    print('recording title: $recording');
-                    return ListTile(
-                      title: Text(recording.replaceAll('.m4a', '')),
-                      onTap: () {},
-                    );
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                }
+                final recording = filteredListProvider[index];
+                return ListTile(
+                  title: Text(recording.replaceAll('.m4a', '')),
+                  onTap: () {
+                    final index = recordingList.indexOf(recording);
+                    pageController.jumpToPage(index);
+                    Navigator.pop(context);
+                  },
+                );
               },
             ),
           )

@@ -1,16 +1,29 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:io';
+import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final filteredAudioListProvider = Provider<List<String>>((ref) {
+  final searchQuery = ref.watch(searchQueryProvider);
+  final recordingList = ref.watch(recordingListProvider); // Your original list
+
+  // Return the filtered list based on search query
+  if (searchQuery.isEmpty) {
+    return recordingList; // If query is empty, return all recordings
+  } else {
+    return recordingList.where((recording) {
+      return recording.toLowerCase().contains(searchQuery.toLowerCase());
+    }).toList(); // Filtered list
+  }
+});
+
 final searchControllerProvider = StateProvider<TextEditingController>((ref) {
   print('search QP: $searchQueryProvider');
-  return searchQueryProvider == 'StateProvider<String>#48ec2'
-      ? TextEditingController()
-      : TextEditingController(text: ref.read(searchQueryProvider));
+  return TextEditingController(text: ref.read(searchQueryProvider));
   //return TextEditingController(text: searchQueryProvider.toString());
 });
 
