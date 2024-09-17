@@ -7,6 +7,10 @@ import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final navbarIndexProvider = StateProvider((ref) {
+  return 0;
+});
+
 final filteredAudioListProvider = Provider<List<String>>((ref) {
   final searchQuery = ref.watch(searchQueryProvider);
   final recordingList = ref.watch(recordingListProvider); // Your original list
@@ -31,7 +35,7 @@ final searchQueryProvider = StateProvider<String>((ref) {
   return '';
 });
 
-final pageViewControllerProvider = Provider<PageController>((ref) {
+final pageViewControllerProvider = StateProvider<PageController>((ref) {
   return PageController(viewportFraction: 0.92);
 });
 

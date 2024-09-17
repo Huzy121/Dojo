@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "386813086476",
+    "project_id": "dojo-c0e21",
+    "storage_bucket": "dojo-c0e21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386813086476:android:8f6b89b150a18085891729",
+        "android_client_info": {
+          "package_name": "com.example.dojo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTAuaDZ3EJAq1I50WAGeUlBVBFpgQdRtc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

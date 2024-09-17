@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, avoid_print
+
 import 'package:dojo/Screens/New%20Recording/new_recording.dart';
 import 'package:dojo/Screens/Search/search_page.dart';
 import 'package:dojo/Services/audio_player_service.dart';
@@ -11,12 +13,14 @@ class CustomNavigationBar extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isRecording = useState(false);
-    final _selectedIndex = useState(0); // Use useState for managing state
+    final _selectedIndex =
+        ref.watch(navbarIndexProvider); // Use useState for managing state
     final audioRecorderService = ref.read(audioRecorderServiceProvider);
     AudioPlayerService audioPlayerService = AudioPlayerService();
 
     void _onItemTapped(int index) {
-      _selectedIndex.value = index; // Update the selectedIndex using useState
+      ref.read(navbarIndexProvider.notifier).state =
+          index; // Update the selectedIndex using useState
     }
 
     return Padding(
@@ -49,18 +53,37 @@ class CustomNavigationBar extends HookConsumerWidget {
               children: [
                 IconButton(
                   icon: Icon(PhosphorIcons.houseSimple()),
-                  onPressed: () => _onItemTapped(0),
-                  color: _selectedIndex.value == 0
+                  onPressed: () {
+                    print(ref.read(pageViewControllerProvider.notifier).state);
+                    ModalRoute.of(context)?.settings.name != '/'
+                        ? Navigator.popUntil(
+                            context,
+                            // Replace '/home' with the route name of your Home page
+                            (Route<dynamic> route) => route
+                                .isFirst, // Remove all routes except the root route
+                          )
+                        : null;
+
+                    _onItemTapped(0);
+                  },
+                  color: ref.read(navbarIndexProvider) == 0
                       ? Color(0xFFB3714A)
                       : Color(0xFFE2B893),
                 ),
                 IconButton(
                   icon: Icon(PhosphorIcons.magnifyingGlass()),
                   onPressed: () {
+                    ModalRoute.of(context)?.settings.name != '/search'
+                        ? Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/search', // The route you're navigating to
+                            (Route<dynamic> route) => route
+                                .isFirst, // Remove all routes until the first route (the root '/')
+                          )
+                        : null;
                     _onItemTapped(1);
-                    Navigator.pushNamed(context, '/search');
                   },
-                  color: _selectedIndex.value == 1
+                  color: ref.read(navbarIndexProvider) == 1
                       ? Color(0xFFB3714A)
                       : Color(0xFFE2B893),
                 ),
@@ -92,14 +115,17 @@ class CustomNavigationBar extends HookConsumerWidget {
                       isRecording.value = false;
                     }
                   },
-                  color: _selectedIndex.value == 2
+                  color: ref.read(navbarIndexProvider) == 2
                       ? Color(0xFFD95C5C)
                       : Color(0xFFD95C5C),
                 ),
                 IconButton(
                   icon: Icon(PhosphorIcons.trophy()),
-                  onPressed: () => _onItemTapped(3),
-                  color: _selectedIndex.value == 3
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                    _onItemTapped(3);
+                  },
+                  color: ref.read(navbarIndexProvider) == 3
                       ? Color(0xFFB3714A)
                       : Color(0xFFE2B893),
                 ),
@@ -108,7 +134,7 @@ class CustomNavigationBar extends HookConsumerWidget {
                   onPressed: () {
                     _onItemTapped(4);
                   },
-                  color: _selectedIndex.value == 4
+                  color: ref.read(navbarIndexProvider) == 4
                       ? Color(0xFFB3714A)
                       : Color(0xFFE2B893),
                 ),

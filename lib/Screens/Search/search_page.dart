@@ -2,10 +2,13 @@
 
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:dojo/Screens/Audio%20Player/audio_player_constants.dart';
+import 'package:dojo/Screens/Home%20Page/Widgets/custom_navigation_bar.dart';
 import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 import 'package:dojo/assets/riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SearchPage extends ConsumerWidget {
@@ -14,7 +17,7 @@ class SearchPage extends ConsumerWidget {
     final recordingList = ref.read(recordingListProvider);
     final searchController = ref.read(searchControllerProvider);
     final filteredListProvider = ref.watch(filteredAudioListProvider);
-    final pageController = ref.read(pageViewControllerProvider);
+    final pageController = ref.read(pageViewControllerProvider.notifier).state;
     return Scaffold(
       body: Column(
         children: [
@@ -24,7 +27,7 @@ class SearchPage extends ConsumerWidget {
               autofocus: true,
               controller: searchController,
               decoration: InputDecoration(
-                hintText: 'Search...', // Optional hint text
+                hintText: ('Search...'), // Optional hint text
                 filled: true,
                 fillColor: Colors
                     .transparent, // Background color to give it a "floating" look
@@ -69,10 +72,14 @@ class SearchPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final recording = filteredListProvider[index];
                 return ListTile(
-                  title: Text(recording.replaceAll('.m4a', '')),
+                  title: Text(
+                    recording.replaceAll('.m4a', ''),
+                    style: audioPlayerTitle,
+                  ),
                   onTap: () {
                     final index = recordingList.indexOf(recording);
                     pageController.jumpToPage(index);
+                    ref.read(navbarIndexProvider.notifier).state = 0;
                     Navigator.pop(context);
                   },
                 );
@@ -81,6 +88,7 @@ class SearchPage extends ConsumerWidget {
           )
         ],
       ),
+      bottomNavigationBar: CustomNavigationBar(),
     );
   }
 }
