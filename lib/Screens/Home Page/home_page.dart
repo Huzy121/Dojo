@@ -3,6 +3,7 @@
 import 'package:dojo/Screens/Home%20Page/Widgets/recording_tile.dart';
 import 'package:dojo/Services/audio_player_service.dart';
 import 'package:dojo/Screens/Home%20Page/Widgets/custom_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'home_page_constants.dart';
 import 'package:dojo/Screens/Home%20Page/files_notifier.dart';
 import 'package:dojo/assets/riverpod.dart';

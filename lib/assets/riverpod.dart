@@ -7,9 +7,11 @@ import 'package:dojo/Services/audio_recorder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final navbarIndexProvider = StateProvider((ref) {
-  return 0;
-});
+// final navbarIndexProvider = StateProvider((ref) {
+//   return 0;
+// });
+
+final navbarIndexProvider = StateProvider<int>((ref) => 0);
 
 final filteredAudioListProvider = Provider<List<String>>((ref) {
   final searchQuery = ref.watch(searchQueryProvider);
@@ -81,6 +83,7 @@ final recordingTitleProvider = StateProvider<String>((ref) {
 final isRecordingProvider = StateProvider<bool>((ref) {
   return false;
 });
+
 final recordingListFutureProvider =
     FutureProvider<List<FileSystemEntity>>((ref) async {
   String path = ref.read(localDirectoryProvider);

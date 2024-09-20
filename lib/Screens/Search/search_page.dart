@@ -27,6 +27,7 @@ class SearchPage extends ConsumerWidget {
               autofocus: true,
               controller: searchController,
               decoration: InputDecoration(
+                prefixIcon: Icon(PhosphorIcons.magnifyingGlass()),
                 hintText: ('Search...'), // Optional hint text
                 filled: true,
                 fillColor: Colors

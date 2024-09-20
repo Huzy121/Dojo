@@ -15,6 +15,7 @@ class CustomNavigationBar extends HookConsumerWidget {
     final isRecording = useState(false);
     final _selectedIndex =
         ref.watch(navbarIndexProvider); // Use useState for managing state
+
     final audioRecorderService = ref.read(audioRecorderServiceProvider);
     AudioPlayerService audioPlayerService = AudioPlayerService();
 
@@ -56,12 +57,7 @@ class CustomNavigationBar extends HookConsumerWidget {
                   onPressed: () {
                     print(ref.read(pageViewControllerProvider.notifier).state);
                     ModalRoute.of(context)?.settings.name != '/'
-                        ? Navigator.popUntil(
-                            context,
-                            // Replace '/home' with the route name of your Home page
-                            (Route<dynamic> route) => route
-                                .isFirst, // Remove all routes except the root route
-                          )
+                        ? Navigator.popUntil(context, (route) => route.isFirst)
                         : null;
 
                     _onItemTapped(0);
@@ -122,7 +118,6 @@ class CustomNavigationBar extends HookConsumerWidget {
                 IconButton(
                   icon: Icon(PhosphorIcons.trophy()),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/login');
                     _onItemTapped(3);
                   },
                   color: ref.read(navbarIndexProvider) == 3

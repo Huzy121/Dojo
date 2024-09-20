@@ -13,7 +13,6 @@ A Flutter application that features audio recording, playback, and a custom navi
 
 ![Home Page](screenshots/dojo_home_page.png)
 ![Audio Player](screenshots/audio_player.png)
-![Search Page](screenshots/search_page.png)
 
 ## Getting Started
 
